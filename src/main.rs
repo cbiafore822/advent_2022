@@ -5,13 +5,14 @@ use peak_alloc::PeakAlloc;
 
 mod day_1;
 mod day_2;
+mod day_3;
 
 #[global_allocator]
 static PEAK_ALLOC: PeakAlloc = PeakAlloc;
 
 fn main() {
     let start = Local::now();
-    let res = day_2::rps_correct_score();
+    let res = day_3::get_group_sum();
     let duration = (Local::now() - start).num_microseconds().unwrap();
     println!(
         "Result: {:?}",

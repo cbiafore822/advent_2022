@@ -9,7 +9,7 @@ const TEST: &str = "inputs/test.txt";
 pub fn rps_score() -> Result<isize> {
     let input = get_input(INPUT)?;
     let mut res = 0;
-    for game in input.split("\n") {
+    for game in input.lines() {
         res += match game.trim() {
             "A Y" => 8,
             "B Z" => 9,
@@ -29,7 +29,7 @@ pub fn rps_score() -> Result<isize> {
 pub fn rps_correct_score() -> Result<isize> {
     let input = get_input(INPUT)?;
     let mut res = 0;
-    for game in input.split("\n") {
+    for game in input.lines() {
         res += match game.trim() {
             "A Z" => 8,
             "B Z" => 9,

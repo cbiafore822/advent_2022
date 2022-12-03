@@ -12,7 +12,7 @@ pub fn max_calories() -> Result<isize> {
     let input = get_input(INPUT)?;
     let mut res = 0;
     let mut curr = 0;
-    for calorie_str in input.split("\n") {
+    for calorie_str in input.lines() {
         match calorie_str.parse::<isize>() {
             Ok(calorie) => curr += calorie,
             Err(_) => {
@@ -28,7 +28,7 @@ pub fn max3_calories() -> Result<isize> {
     let input = get_input(INPUT)?;
     let mut heap = BinaryHeap::new();
     let mut curr = 0;
-    for calorie_str in input.split("\n") {
+    for calorie_str in input.lines() {
         match calorie_str.parse::<isize>() {
             Ok(calorie) => curr += calorie,
             Err(_) => {
