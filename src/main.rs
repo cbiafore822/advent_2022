@@ -13,7 +13,7 @@ static PEAK_ALLOC: PeakAlloc = PeakAlloc;
 
 fn main() {
     let start = Local::now();
-    let res = day_3::get_rucksack_sum();
+    let res = day_4::count_any_overlaps();
     let duration = (Local::now() - start).num_microseconds().unwrap();
     println!(
         "Result: {:?}",
