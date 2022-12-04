@@ -12,8 +12,8 @@ pub fn get_rucksack_sum() -> Result<isize> {
     let mut res = 0;
     for rucksack in rucksacks.lines() {
         let mid = rucksack.len() / 2;
-        let ruck_1: HashSet<char> = rucksack[0..mid].chars().collect();
-        let ruck_2: HashSet<char> = rucksack[mid..rucksack.len()].chars().collect();
+        let ruck_1: HashSet<char> = rucksack[..mid].chars().collect();
+        let ruck_2: HashSet<char> = rucksack[mid..].chars().collect();
         let letter = ruck_1.intersection(&ruck_2).next().unwrap().to_owned();
         res += match letter {
             'a'..='z' => letter as isize - 96,
