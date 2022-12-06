@@ -8,19 +8,20 @@ mod day_2;
 mod day_3;
 mod day_4;
 mod day_5;
+mod day_6;
 
 #[global_allocator]
 static PEAK_ALLOC: PeakAlloc = PeakAlloc;
 
 fn main() {
     let start = Local::now();
-    let res = day_5::get_tops_2();
+    let res = day_6::get_start_of_message();
     let duration = (Local::now() - start).num_microseconds().unwrap();
     println!(
         "Result: {:?}",
         res.unwrap_or_else(|err| {
             println!("{:?}", err);
-            "Error".to_string()
+            -1
         })
     );
     println!("Elapsed time: {} us", duration);

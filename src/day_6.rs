@@ -1,0 +1,59 @@
+use std::{
+    collections::HashMap,
+    fs::File,
+    io::{Read, Result},
+};
+
+const INPUT: &str = "inputs/day_6.txt";
+const TEST: &str = "inputs/test.txt";
+
+pub fn get_start_of_packet() -> Result<isize> {
+    let stream: Vec<char> = get_input(INPUT)?.chars().collect();
+    let mut seen: HashMap<char, isize> = HashMap::new();
+    for i in 0..stream.len() {
+        *seen.entry(stream[i]).or_insert(0) += 1;
+        if i < 4 {
+            continue;
+        }
+        let k = stream[i - 4];
+        let val = seen.get(&k).unwrap() - 1;
+        if val != 0 {
+            seen.insert(k, val);
+        } else {
+            seen.remove(&k);
+        }
+        if seen.len() == 4 {
+            return Ok((i + 1).try_into().unwrap());
+        }
+    }
+    Ok(-1)
+}
+
+pub fn get_start_of_message() -> Result<isize> {
+    let stream: Vec<char> = get_input(INPUT)?.chars().collect();
+    let mut seen: HashMap<char, isize> = HashMap::new();
+    for i in 0..stream.len() {
+        *seen.entry(stream[i]).or_insert(0) += 1;
+        if i < 14 {
+            continue;
+        }
+        let k = stream[i - 14];
+        let val = seen.get(&k).unwrap() - 1;
+        if val != 0 {
+            seen.insert(k, val);
+        } else {
+            seen.remove(&k);
+        }
+        if seen.len() == 14 {
+            return Ok((i + 1).try_into().unwrap());
+        }
+    }
+    Ok(-1)
+}
+
+fn get_input(path: &str) -> Result<String> {
+    let mut file = File::open(path)?;
+    let mut buf = String::new();
+    file.read_to_string(&mut buf)?;
+    Ok(buf)
+}
