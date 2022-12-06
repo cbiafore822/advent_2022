@@ -7,19 +7,20 @@ mod day_1;
 mod day_2;
 mod day_3;
 mod day_4;
+mod day_5;
 
 #[global_allocator]
 static PEAK_ALLOC: PeakAlloc = PeakAlloc;
 
 fn main() {
     let start = Local::now();
-    let res = day_4::count_any_overlaps();
+    let res = day_5::get_tops_2();
     let duration = (Local::now() - start).num_microseconds().unwrap();
     println!(
         "Result: {:?}",
         res.unwrap_or_else(|err| {
             println!("{:?}", err);
-            -1
+            "Error".to_string()
         })
     );
     println!("Elapsed time: {} us", duration);
