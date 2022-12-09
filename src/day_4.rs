@@ -6,6 +6,8 @@ use std::{
 const INPUT: &str = "inputs/day_4.txt";
 const TEST: &str = "inputs/test.txt";
 
+// Elapsed time: 992 us
+// Memory Used: 11.272461 kb
 pub fn count_full_overlaps() -> Result<isize> {
     let assignments = get_input(INPUT)?;
     let mut res = 0;
@@ -23,6 +25,8 @@ pub fn count_full_overlaps() -> Result<isize> {
     Ok(res)
 }
 
+// Elapsed time: 982 us
+// Memory Used: 11.272461 kb
 pub fn count_any_overlaps() -> Result<isize> {
     let assignments = get_input(INPUT)?;
     let mut res = 0;

@@ -8,6 +8,8 @@ use std::{
 const INPUT: &str = "inputs/day_5.txt";
 const TEST: &str = "inputs/test.txt";
 
+// Elapsed time: 3773 us
+// Memory Used: 93.231445 kb
 pub fn get_tops() -> Result<String> {
     let input = get_input(INPUT)?;
     let mut lines = input.lines();
@@ -32,6 +34,8 @@ pub fn get_tops() -> Result<String> {
     Ok(tops.concat())
 }
 
+// Elapsed time: 3826 us
+// Memory Used: 93.231445 kb
 pub fn get_tops_2() -> Result<String> {
     let input = get_input(INPUT)?;
     let mut lines = input.lines();

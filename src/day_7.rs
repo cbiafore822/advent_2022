@@ -13,6 +13,8 @@ const TEST: &str = "inputs/test.txt";
 const DISK_SPACE: usize = 70000000;
 const UPDATE: usize = 30000000;
 
+// Elapsed time: 3096 us
+// Memory Used: 129.36328 kb
 pub fn determine_directory_sizes() -> Result<usize> {
     let input = get_input(INPUT)?;
     let root = create_filesystem(input);
@@ -21,6 +23,8 @@ pub fn determine_directory_sizes() -> Result<usize> {
     Ok(*res)
 }
 
+// Elapsed time: 3232 us
+// Memory Used: 129.36328 kb
 pub fn get_deleted_directory() -> Result<usize> {
     let input = get_input(INPUT)?;
     let root = create_filesystem(input);

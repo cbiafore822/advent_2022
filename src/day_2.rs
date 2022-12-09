@@ -6,6 +6,8 @@ use std::{
 const INPUT: &str = "inputs/day_2.txt";
 const TEST: &str = "inputs/test.txt";
 
+// Elapsed time: 1301 us
+// Memory Used: 9.878906 kb
 pub fn rps_score() -> Result<isize> {
     let input = get_input(INPUT)?;
     let mut res = 0;
@@ -26,6 +28,8 @@ pub fn rps_score() -> Result<isize> {
     Ok(res)
 }
 
+// Elapsed time: 1309 us
+// Memory Used: 9.878906 kb
 pub fn rps_correct_score() -> Result<isize> {
     let input = get_input(INPUT)?;
     let mut res = 0;

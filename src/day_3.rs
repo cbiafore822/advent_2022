@@ -7,6 +7,8 @@ use std::{
 const INPUT: &str = "inputs/day_3.txt";
 const TEST: &str = "inputs/test.txt";
 
+// Elapsed time: 5296 us
+// Memory Used: 10.2109375 kb
 pub fn get_rucksack_sum() -> Result<isize> {
     let rucksacks = get_input(INPUT)?;
     let mut res = 0;
@@ -24,6 +26,8 @@ pub fn get_rucksack_sum() -> Result<isize> {
     Ok(res)
 }
 
+// Elapsed time: 5362 us
+// Memory Used: 10.6328125 kb
 pub fn get_group_sum() -> Result<isize> {
     let input = get_input(INPUT)?;
     let mut rucksacks = input.lines();

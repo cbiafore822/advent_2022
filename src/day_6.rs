@@ -7,6 +7,8 @@ use std::{
 const INPUT: &str = "inputs/day_6.txt";
 const TEST: &str = "inputs/test.txt";
 
+// Elapsed time: 2269 us
+// Memory Used: 28.136719 kb
 pub fn get_start_of_packet() -> Result<isize> {
     let stream: Vec<char> = get_input(INPUT)?.chars().collect();
     let mut seen: HashMap<char, isize> = HashMap::new();
@@ -29,6 +31,8 @@ pub fn get_start_of_packet() -> Result<isize> {
     Ok(-1)
 }
 
+// Elapsed time: 3474 us
+// Memory Used: 28.136719 kb
 pub fn get_start_of_message() -> Result<isize> {
     let stream: Vec<char> = get_input(INPUT)?.chars().collect();
     let mut seen: HashMap<char, isize> = HashMap::new();

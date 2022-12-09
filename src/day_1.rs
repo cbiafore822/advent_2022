@@ -8,6 +8,8 @@ use std::{
 const INPUT: &str = "inputs/day_1.txt";
 const TEST: &str = "inputs/test.txt";
 
+// Elapsed time: 762 us
+// Memory Used: 10.375 kb
 pub fn max_calories() -> Result<isize> {
     let input = get_input(INPUT)?;
     let mut res = 0;
@@ -24,6 +26,8 @@ pub fn max_calories() -> Result<isize> {
     Ok(res)
 }
 
+// Elapsed time: 812 us
+// Memory Used: 16.375 kb
 pub fn max3_calories() -> Result<isize> {
     let input = get_input(INPUT)?;
     let mut heap = BinaryHeap::new();
