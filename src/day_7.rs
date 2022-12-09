@@ -40,7 +40,7 @@ fn create_filesystem(input: String) -> INodeHandle {
             curr = match &line[5..] {
                 "/" => root.clone(),
                 ".." => curr.borrow().parent.clone().unwrap(),
-                name => {curr.borrow_mut().children.entry(name.to_string()).or_insert(INode::dir()).clone()}
+                name => curr.borrow_mut().children.entry(name.to_string()).or_insert(INode::dir()).clone()
             };
         } else if line.starts_with("dir") {
             let dir = line.split_once(" ").unwrap().1;
@@ -58,7 +58,7 @@ fn create_filesystem(input: String) -> INodeHandle {
 
 type INodeHandle = Rc<RefCell<INode>>;
 
-#[derive(Debug, Default)]
+#[derive(Default)]
 struct INode {
     size: usize,
     is_dir: bool,
