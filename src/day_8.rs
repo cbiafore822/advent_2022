@@ -101,12 +101,20 @@ fn get_score(heights: &Vec<Vec<usize>>, i: usize, j: usize, n: usize, m: usize) 
     score
 }
 
-fn get_count_direction(heights: &Vec<Vec<usize>>, i: usize, j: usize, r: Either<Range<usize>, Rev<Range<usize>>>, is_vertical: bool) -> usize {
+fn get_count_direction(
+    heights: &Vec<Vec<usize>>,
+    i: usize,
+    j: usize,
+    r: Either<Range<usize>, Rev<Range<usize>>>,
+    is_vertical: bool,
+) -> usize {
     let mut count = 0;
     for k in r {
         count += 1;
-        let coord = if is_vertical {(k, j)} else {(i, k)};
-        if heights[i][j] <= heights[coord.0][coord.1] {break};
+        let coord = if is_vertical { (k, j) } else { (i, k) };
+        if heights[i][j] <= heights[coord.0][coord.1] {
+            break;
+        };
     }
     count
 }
