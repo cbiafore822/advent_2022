@@ -11,13 +11,14 @@ mod day_5;
 mod day_6;
 mod day_7;
 mod day_8;
+mod day_9;
 
 #[global_allocator]
 static PEAK_ALLOC: PeakAlloc = PeakAlloc;
 
 fn main() {
     let start = Local::now();
-    let res = day_8::get_highest_scenic_score().unwrap();
+    let res = day_9::find_long_rope_locations().unwrap();
     let duration = (Local::now() - start).num_microseconds().unwrap();
     println!("Result: {:?}", res);
     println!("Elapsed time: {} us", duration);
