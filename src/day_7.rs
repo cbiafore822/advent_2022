@@ -1,10 +1,5 @@
-use std::{
-    cell::RefCell,
-    collections::HashMap,
-    fs::File,
-    io::{Read, Result},
-    rc::Rc, cmp,
-};
+use crate::get_input;
+use std::{cell::RefCell, cmp, collections::HashMap, io::Result, rc::Rc};
 
 use regex::Regex;
 
@@ -44,15 +39,30 @@ fn create_filesystem(input: String) -> INodeHandle {
             curr = match &line[5..] {
                 "/" => root.clone(),
                 ".." => curr.borrow().parent.clone().unwrap(),
-                name => curr.borrow_mut().children.entry(name.to_string()).or_insert(INode::dir()).clone()
+                name => curr
+                    .borrow_mut()
+                    .children
+                    .entry(name.to_string())
+                    .or_insert(INode::dir())
+                    .clone(),
             };
         } else if line.starts_with("dir") {
             let dir = line.split_once(" ").unwrap().1;
-            let node = curr.borrow_mut().children.entry(dir.to_string()).or_insert(INode::dir()).clone();
+            let node = curr
+                .borrow_mut()
+                .children
+                .entry(dir.to_string())
+                .or_insert(INode::dir())
+                .clone();
             node.borrow_mut().parent = Some(curr.clone());
         } else if re.is_match(line) {
             let (size, file) = line.split_once(" ").unwrap();
-            let node = curr.borrow_mut().children.entry(file.to_string()).or_insert(INode::file()).clone();
+            let node = curr
+                .borrow_mut()
+                .children
+                .entry(file.to_string())
+                .or_insert(INode::file())
+                .clone();
             node.borrow_mut().parent = Some(curr.clone());
             node.borrow_mut().size = size.parse::<usize>().unwrap();
         }
@@ -72,11 +82,21 @@ struct INode {
 
 impl INode {
     fn dir() -> INodeHandle {
-        Rc::new(RefCell::new(INode {size: 0, is_dir: true, parent: None, children: HashMap::default()}))
+        Rc::new(RefCell::new(INode {
+            size: 0,
+            is_dir: true,
+            parent: None,
+            children: HashMap::default(),
+        }))
     }
 
     fn file() -> INodeHandle {
-        Rc::new(RefCell::new(INode {size: 0, is_dir: false, parent: None, children: HashMap::default()}))
+        Rc::new(RefCell::new(INode {
+            size: 0,
+            is_dir: false,
+            parent: None,
+            children: HashMap::default(),
+        }))
     }
 }
 
@@ -101,11 +121,4 @@ fn delete_directory(curr: INodeHandle, limit: usize, res: &mut usize) {
     if curr.borrow().is_dir && curr.borrow().size >= limit {
         *res = cmp::min(*res, size);
     }
-}
-
-fn get_input(path: &str) -> Result<String> {
-    let mut file = File::open(path)?;
-    let mut buf = String::new();
-    file.read_to_string(&mut buf)?;
-    Ok(buf)
 }

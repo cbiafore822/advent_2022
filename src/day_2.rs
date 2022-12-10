@@ -1,7 +1,5 @@
-use std::{
-    fs::File,
-    io::{Read, Result},
-};
+use crate::get_input;
+use std::io::Result;
 
 const INPUT: &str = "inputs/day_2.txt";
 const TEST: &str = "inputs/test.txt";
@@ -48,11 +46,4 @@ pub fn rps_correct_score() -> Result<isize> {
         };
     }
     Ok(res)
-}
-
-fn get_input(path: &str) -> Result<String> {
-    let mut file = File::open(path)?;
-    let mut buf = String::new();
-    file.read_to_string(&mut buf)?;
-    Ok(buf)
 }

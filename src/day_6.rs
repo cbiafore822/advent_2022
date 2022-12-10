@@ -1,8 +1,5 @@
-use std::{
-    collections::HashMap,
-    fs::File,
-    io::{Read, Result},
-};
+use crate::get_input;
+use std::{collections::HashMap, io::Result};
 
 const INPUT: &str = "inputs/day_6.txt";
 const TEST: &str = "inputs/test.txt";
@@ -53,11 +50,4 @@ pub fn get_start_of_message() -> Result<isize> {
         }
     }
     Ok(-1)
-}
-
-fn get_input(path: &str) -> Result<String> {
-    let mut file = File::open(path)?;
-    let mut buf = String::new();
-    file.read_to_string(&mut buf)?;
-    Ok(buf)
 }

@@ -1,9 +1,6 @@
+use crate::get_input;
 use regex::Regex;
-use std::{
-    fs::File,
-    io::{Read, Result},
-    str::Lines,
-};
+use std::{io::Result, str::Lines};
 
 const INPUT: &str = "inputs/day_5.txt";
 const TEST: &str = "inputs/test.txt";
@@ -80,11 +77,4 @@ fn get_stacks(lines: &mut Lines) -> Vec<Vec<char>> {
         res[i].reverse();
     }
     res
-}
-
-fn get_input(path: &str) -> Result<String> {
-    let mut file = File::open(path)?;
-    let mut buf = String::new();
-    file.read_to_string(&mut buf)?;
-    Ok(buf)
 }

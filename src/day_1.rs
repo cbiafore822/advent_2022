@@ -1,9 +1,5 @@
-use std::{
-    cmp::max,
-    collections::BinaryHeap,
-    fs::File,
-    io::{Read, Result},
-};
+use crate::get_input;
+use std::{cmp::max, collections::BinaryHeap, io::Result};
 
 const INPUT: &str = "inputs/day_1.txt";
 const TEST: &str = "inputs/test.txt";
@@ -42,11 +38,4 @@ pub fn max3_calories() -> Result<isize> {
         }
     }
     Ok(heap.pop().unwrap() + heap.pop().unwrap() + heap.pop().unwrap())
-}
-
-fn get_input(path: &str) -> Result<String> {
-    let mut file = File::open(path)?;
-    let mut buf = String::new();
-    file.read_to_string(&mut buf)?;
-    Ok(buf)
 }

@@ -1,11 +1,5 @@
-use std::{
-    cmp::max,
-    collections::HashSet,
-    fs::File,
-    io::{Read, Result},
-    iter::Rev,
-    ops::Range,
-};
+use crate::get_input;
+use std::{cmp::max, collections::HashSet, io::Result, iter::Rev, ops::Range};
 
 use itertools::Either;
 
@@ -117,11 +111,4 @@ fn get_count_direction(
         };
     }
     count
-}
-
-fn get_input(path: &str) -> Result<String> {
-    let mut file = File::open(path)?;
-    let mut buf = String::new();
-    file.read_to_string(&mut buf)?;
-    Ok(buf)
 }

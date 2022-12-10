@@ -1,8 +1,5 @@
-use std::{
-    collections::HashSet,
-    fs::File,
-    io::{Read, Result},
-};
+use crate::get_input;
+use std::{collections::HashSet, io::Result};
 
 const INPUT: &str = "inputs/day_3.txt";
 const TEST: &str = "inputs/test.txt";
@@ -45,11 +42,4 @@ pub fn get_group_sum() -> Result<isize> {
         }
     }
     Ok(res)
-}
-
-fn get_input(path: &str) -> Result<String> {
-    let mut file = File::open(path)?;
-    let mut buf = String::new();
-    file.read_to_string(&mut buf)?;
-    Ok(buf)
 }

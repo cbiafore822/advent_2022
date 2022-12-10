@@ -1,8 +1,5 @@
-use std::{
-    collections::HashSet,
-    fs::File,
-    io::{Read, Result},
-};
+use crate::get_input;
+use std::{collections::HashSet, io::Result};
 
 const INPUT: &str = "inputs/day_9.txt";
 const TEST: &str = "inputs/test.txt";
@@ -73,11 +70,4 @@ impl Rope {
         }
         self.knots[self.length - 1]
     }
-}
-
-fn get_input(path: &str) -> Result<String> {
-    let mut file = File::open(path)?;
-    let mut buf = String::new();
-    file.read_to_string(&mut buf)?;
-    Ok(buf)
 }
