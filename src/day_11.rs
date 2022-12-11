@@ -5,11 +5,11 @@ const INPUT: &str = "inputs/day_11.txt";
 const TEST: &str = "inputs/test.txt";
 
 // Elapsed time: 786 us
-// Memory Used: 3.9238281 kb
+// Memory Used: 3.9228516 kb
 pub fn get_monkey_business() -> Result<usize> {
     let input = get_input(INPUT)?;
     let mut lines = input.lines();
-    let mut monkies = Vec::new();
+    let mut monkeys = Vec::new();
     let mut modu = 1;
     while let Some(_line) = lines.next() {
         let monkey = Monkey::new(
@@ -20,29 +20,29 @@ pub fn get_monkey_business() -> Result<usize> {
             lines.next().unwrap(),
         );
         modu *= monkey.test;
-        monkies.push(monkey);
+        monkeys.push(monkey);
         lines.next();
     }
     for _i in 0..20 {
-        for j in 0..monkies.len() {
-            while !monkies[j].items.is_empty() {
-                let monkey = monkies.get_mut(j).unwrap();
+        for j in 0..monkeys.len() {
+            while !monkeys[j].items.is_empty() {
+                let monkey = monkeys.get_mut(j).unwrap();
                 let item = monkey.items.pop_front().unwrap();
                 let (new, next) = monkey.insp_items(item, true, modu);
-                monkies.get_mut(next).unwrap().items.push_back(new);
+                monkeys.get_mut(next).unwrap().items.push_back(new);
             }
         }
     }
-    monkies.sort_by(|a, b| b.inspection_count.partial_cmp(&a.inspection_count).unwrap());
-    Ok(monkies[0].inspection_count * monkies[1].inspection_count)
+    monkeys.sort_by(|a, b| b.inspection_count.partial_cmp(&a.inspection_count).unwrap());
+    Ok(monkeys[0].inspection_count * monkeys[1].inspection_count)
 }
 
-// Elapsed time: 74697 us
-// Memory Used: 3.9238281 kb
+// Elapsed time: 74555 us
+// Memory Used: 3.9228516 kb
 pub fn get_more_monkey_business() -> Result<usize> {
     let input = get_input(INPUT)?;
     let mut lines = input.lines();
-    let mut monkies = Vec::new();
+    let mut monkeys = Vec::new();
     let mut modu = 1;
     while let Some(_line) = lines.next() {
         let monkey = Monkey::new(
@@ -53,21 +53,21 @@ pub fn get_more_monkey_business() -> Result<usize> {
             lines.next().unwrap(),
         );
         modu *= monkey.test;
-        monkies.push(monkey);
+        monkeys.push(monkey);
         lines.next();
     }
     for _i in 0..10000 {
-        for j in 0..monkies.len() {
-            while !monkies[j].items.is_empty() {
-                let monkey = monkies.get_mut(j).unwrap();
+        for j in 0..monkeys.len() {
+            while !monkeys[j].items.is_empty() {
+                let monkey = monkeys.get_mut(j).unwrap();
                 let item = monkey.items.pop_front().unwrap();
                 let (new, next) = monkey.insp_items(item, false, modu);
-                monkies.get_mut(next).unwrap().items.push_back(new);
+                monkeys.get_mut(next).unwrap().items.push_back(new);
             }
         }
     }
-    monkies.sort_by(|a, b| b.inspection_count.partial_cmp(&a.inspection_count).unwrap());
-    Ok(monkies[0].inspection_count * monkies[1].inspection_count)
+    monkeys.sort_by(|a, b| b.inspection_count.partial_cmp(&a.inspection_count).unwrap());
+    Ok(monkeys[0].inspection_count * monkeys[1].inspection_count)
 }
 
 struct Monkey {
