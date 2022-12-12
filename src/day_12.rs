@@ -45,7 +45,12 @@ fn get_map_info(input: String) -> (Vec<Vec<u8>>, (usize, usize), (usize, usize))
     (map, start.unwrap(), end.unwrap())
 }
 
-fn bfs(map: Vec<Vec<u8>>, start: (usize, usize), end: (usize, usize), go_up: bool) -> Result<usize> {
+fn bfs(
+    map: Vec<Vec<u8>>,
+    start: (usize, usize),
+    end: (usize, usize),
+    go_up: bool,
+) -> Result<usize> {
     let (m, n) = (map.len(), map[0].len());
     let mut queue = Vec::from([start]);
     let mut visited: HashSet<(usize, usize)> = HashSet::from([start]);
@@ -65,7 +70,9 @@ fn bfs(map: Vec<Vec<u8>>, start: (usize, usize), end: (usize, usize), go_up: boo
                             continue;
                         }
                         let new_level = map[nx][ny];
-                        if (go_up && curr_level + 1 < new_level) || (!go_up && curr_level > new_level + 1){
+                        if (go_up && curr_level + 1 < new_level)
+                            || (!go_up && curr_level > new_level + 1)
+                        {
                             continue;
                         }
                         if (go_up && (nx, ny) == end) || (!go_up && new_level == ('a' as u8)) {
