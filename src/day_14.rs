@@ -24,7 +24,6 @@ pub fn find_resting_sand() -> Result<usize> {
     Ok(simulator.resting.len())
 }
 
-#[derive(Debug)]
 struct SandSimulator {
     rocks: HashSet<(isize, isize)>,
     resting: HashSet<(isize, isize)>,
