@@ -1,5 +1,5 @@
 use crate::get_input;
-use std::{io::Result, iter::Peekable, str::Chars, cmp::Ordering};
+use std::{cmp::Ordering, io::Result, iter::Peekable, str::Chars};
 
 use itertools::Either;
 
@@ -28,10 +28,20 @@ pub fn sort_packets() -> Result<usize> {
     let mut input = get_input(INPUT)?;
     input.push_str("\n[[2]]\n[[6]]\n");
     let packets = Packet::new_list(input);
-    let mut lists: Vec<&MessyList> = packets.iter().map(|p| Vec::from([&p.left, &p.right])).flatten().collect();
+    let mut lists: Vec<&MessyList> = packets
+        .iter()
+        .map(|p| Vec::from([&p.left, &p.right]))
+        .flatten()
+        .collect();
     lists.sort_by(|a, b| a.cmp(b));
-    let i = lists.binary_search(&&MessyList::new(&mut "[[2]]".chars().peekable())).unwrap() + 1;
-    let j = lists.binary_search(&&MessyList::new(&mut "[[6]]".chars().peekable())).unwrap() + 1;
+    let i = lists
+        .binary_search(&&MessyList::new(&mut "[[2]]".chars().peekable()))
+        .unwrap()
+        + 1;
+    let j = lists
+        .binary_search(&&MessyList::new(&mut "[[6]]".chars().peekable()))
+        .unwrap()
+        + 1;
     Ok(i * j)
 }
 
@@ -86,7 +96,9 @@ impl MessyList {
     }
 
     fn from(val: usize) -> Self {
-        MessyList { list: Vec::from([Either::Right(val)]) }
+        MessyList {
+            list: Vec::from([Either::Right(val)]),
+        }
     }
 }
 
@@ -110,7 +122,7 @@ impl Ord for MessyList {
                     };
                 }
             };
-        };
+        }
         res
     }
 }
