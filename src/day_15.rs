@@ -1,6 +1,6 @@
 use crate::get_input;
 use regex::Regex;
-use std::{cmp::max, collections::HashSet, io::Result};
+use std::{cmp::max, io::Result};
 
 const INPUT: &str = "inputs/day_15.txt";
 const TEST: &str = "inputs/test.txt";
@@ -42,7 +42,6 @@ pub fn find_frequency() -> Result<isize> {
     panic!("Did not find missing frequency");
 }
 
-#[derive(Debug)]
 struct TunnelMap {
     sensors: Vec<((isize, isize), (isize, isize))>,
 }
