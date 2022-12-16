@@ -45,13 +45,11 @@ pub fn find_frequency() -> Result<isize> {
 #[derive(Debug)]
 struct TunnelMap {
     sensors: Vec<((isize, isize), (isize, isize))>,
-    beacons: HashSet<(isize, isize)>,
 }
 
 impl TunnelMap {
     fn new(input: String) -> Self {
         let mut sensors = Vec::new();
-        let mut beacons = HashSet::new();
         let re = Regex::new(r"-?\d+").unwrap();
         let mut locations = re.find_iter(&input);
         while let (Some(sx), Some(sy), Some(bx), Some(by)) = (
@@ -69,9 +67,8 @@ impl TunnelMap {
                 by.as_str().parse::<isize>().unwrap(),
             );
             sensors.push((sensor, beacon));
-            beacons.insert(beacon);
         }
-        TunnelMap { sensors, beacons }
+        TunnelMap { sensors }
     }
 
     fn find_bad_locs(&self, row: isize) -> Vec<(isize, isize)> {
