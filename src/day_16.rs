@@ -1,6 +1,6 @@
-use regex::Regex;
-
 use crate::get_input;
+use itertools::Itertools;
+use regex::Regex;
 use std::{
     cmp::max,
     collections::{HashMap, HashSet},
@@ -10,6 +10,8 @@ use std::{
 const INPUT: &str = "inputs/day_16.txt";
 const TEST: &str = "inputs/test.txt";
 
+// Elapsed time: 1319929 us
+// Memory Used: 58027.94 kb
 pub fn find_max_pressure() -> Result<usize> {
     let input = get_input(INPUT)?;
     let valves: HashMap<String, Valve> = input
@@ -21,26 +23,14 @@ pub fn find_max_pressure() -> Result<usize> {
         })
         .collect();
     let clique = make_clique(&valves);
-    let mut max_pressure = 0;
-    let mut paths = Vec::from([State::new(0, "AA".to_string(), 30, HashSet::new())]);
-    while !paths.is_empty() {
-        paths = paths
-            .iter()
-            .map(|state| {
-                let new_states = state.get_next_states(&clique);
-                if new_states.len() == 0 {
-                    max_pressure = max(max_pressure, state.total_pressure);
-                }
-                new_states
-            })
-            .flatten()
-            .collect();
-    }
-    Ok(max_pressure)
+    let accessible: HashSet<String> = clique.keys().map(|key| key.clone()).collect();
+    Ok(find_max_path(&clique, &accessible, 30))
 }
 
+// Elapsed time: 598790387 us
+// Memory Used: 12849.682 kb
 pub fn find_max_pressure_with_elephant() -> Result<usize> {
-    let input = get_input(TEST)?;
+    let input = get_input(INPUT)?;
     let valves: HashMap<String, Valve> = input
         .lines()
         .into_iter()
@@ -50,30 +40,32 @@ pub fn find_max_pressure_with_elephant() -> Result<usize> {
         })
         .collect();
     let clique = make_clique(&valves);
-    let mut paths = Vec::from([State::new(0, "AA".to_string(), 30, HashSet::new())]);
-    let mut possible_paths = Vec::new();
-    while !paths.is_empty() {
-        paths = paths
-            .iter()
-            .map(|state| {
-                let new_states = state.get_next_states(&clique);
-                if new_states.len() == 0 {
-                    possible_paths.push((state.total_pressure, state.on.clone()));
-                }
-                new_states
-            })
-            .flatten()
-            .collect();
-    }
-    let mut max_pressure = 0;
-    for i in 0..possible_paths.len() {
-        let (p_pressure, p_on) = &possible_paths[i];
-        for j in (i + 1)..possible_paths.len() {
-            let (e_pressure, e_on) = &possible_paths[j];
-            if p_pressure + e_pressure > max_pressure && p_on.intersection(&e_on).count() == 0 {
-                max_pressure = p_pressure + e_pressure;
+    let powerset = clique
+        .keys()
+        .filter_map(|key| {
+            if key.as_str() == "AA" {
+                None
+            } else {
+                Some(key.clone())
             }
-        }
+        })
+        .powerset();
+    let mut max_pressure = 0;
+    for p_vec in powerset {
+        let p_accessible: HashSet<String> = HashSet::from_iter(p_vec);
+        let e_accessible: HashSet<String> = clique
+            .keys()
+            .filter_map(|key| {
+                if !p_accessible.contains(key) {
+                    Some(key.clone())
+                } else {
+                    None
+                }
+            })
+            .collect();
+        let p_max_pressure = find_max_path(&clique, &p_accessible, 26);
+        let e_max_pressure = find_max_path(&clique, &e_accessible, 26);
+        max_pressure = max(max_pressure, p_max_pressure + e_max_pressure);
     }
     Ok(max_pressure)
 }
@@ -115,6 +107,29 @@ fn make_clique(valves: &HashMap<String, Valve>) -> HashMap<String, Valve> {
         clique.insert(name.clone(), Valve::new(name.clone(), valve.rate, tunnels));
     }
     clique
+}
+
+fn find_max_path(
+    clique: &HashMap<String, Valve>,
+    accessible: &HashSet<String>,
+    time: usize,
+) -> usize {
+    let mut max_pressure = 0;
+    let mut paths = Vec::from([State::new(0, "AA".to_string(), time, HashSet::new())]);
+    while !paths.is_empty() {
+        paths = paths
+            .iter()
+            .map(|state| {
+                let new_states = state.get_next_states(&clique, &accessible);
+                if new_states.len() == 0 {
+                    max_pressure = max(max_pressure, state.total_pressure);
+                }
+                new_states
+            })
+            .flatten()
+            .collect();
+    }
+    max_pressure
 }
 
 struct Valve {
@@ -166,13 +181,17 @@ impl State {
         }
     }
 
-    fn get_next_states(&self, valves: &HashMap<String, Valve>) -> Vec<Self> {
+    fn get_next_states(
+        &self,
+        valves: &HashMap<String, Valve>,
+        accessible: &HashSet<String>,
+    ) -> Vec<Self> {
         let curr = valves.get(&self.curr).unwrap();
         curr.tunnels
             .iter()
             .filter_map(|tunnel| {
                 let (next, dist) = tunnel;
-                if self.time <= *dist || self.on.contains(next) {
+                if self.time <= *dist || !accessible.contains(next) || self.on.contains(next) {
                     return None;
                 }
                 let remaining_time = self.time - dist;
