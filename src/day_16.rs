@@ -10,31 +10,26 @@ use std::{
 const INPUT: &str = "inputs/day_16.txt";
 const TEST: &str = "inputs/test.txt";
 
-pub fn find_maximal_pressure() -> Result<usize> {
+pub fn find_max_pressure() -> Result<usize> {
     let input = get_input(INPUT)?;
     let valves: HashMap<String, Valve> = input
         .lines()
         .into_iter()
         .map(|line| {
-            let valve = Valve::new(line.to_string());
+            let valve = Valve::from(line.to_string());
             (valve.name.clone(), valve)
         })
         .collect();
+    let clique = make_clique(&valves);
     let mut max_pressure = 0;
-    let mut paths = Vec::from([State::new(
-        0,
-        "AA".to_string(),
-        "".to_string(),
-        30,
-        HashSet::new(),
-    )]);
+    let mut paths = Vec::from([State::new(0, "AA".to_string(), 30, HashSet::new())]);
     while !paths.is_empty() {
         paths = paths
             .iter()
             .map(|state| {
-                let new_states = state.find_paths(&valves);
-                for new_state in &new_states {
-                    max_pressure = max(max_pressure, new_state.total_pressure);
+                let new_states = state.get_next_states(&clique);
+                if new_states.len() == 0 {
+                    max_pressure = max(max_pressure, state.total_pressure);
                 }
                 new_states
             })
@@ -44,55 +39,107 @@ pub fn find_maximal_pressure() -> Result<usize> {
     Ok(max_pressure)
 }
 
-pub fn find_maximal_pressure_with_elephant() -> Result<usize> {
+pub fn find_max_pressure_with_elephant() -> Result<usize> {
     let input = get_input(TEST)?;
     let valves: HashMap<String, Valve> = input
         .lines()
         .into_iter()
         .map(|line| {
-            let valve = Valve::new(line.to_string());
+            let valve = Valve::from(line.to_string());
             (valve.name.clone(), valve)
         })
         .collect();
-    let mut max_pressure = 0;
-    let mut paths = Vec::from([State::new(
-        0,
-        "AA".to_string(),
-        "AA".to_string(),
-        26,
-        HashSet::new(),
-    )]);
+    let clique = make_clique(&valves);
+    let mut paths = Vec::from([State::new(0, "AA".to_string(), 30, HashSet::new())]);
+    let mut possible_paths = Vec::new();
     while !paths.is_empty() {
         paths = paths
             .iter()
             .map(|state| {
-                let new_states = state.find_paths_with_elephant(&valves);
-                for new_state in &new_states {
-                    max_pressure = max(max_pressure, new_state.total_pressure);
+                let new_states = state.get_next_states(&clique);
+                if new_states.len() == 0 {
+                    possible_paths.push((state.total_pressure, state.on.clone()));
                 }
                 new_states
             })
             .flatten()
             .collect();
     }
+    let mut max_pressure = 0;
+    for i in 0..possible_paths.len() {
+        let (p_pressure, p_on) = &possible_paths[i];
+        for j in (i + 1)..possible_paths.len() {
+            let (e_pressure, e_on) = &possible_paths[j];
+            if p_pressure + e_pressure > max_pressure && p_on.intersection(&e_on).count() == 0 {
+                max_pressure = p_pressure + e_pressure;
+            }
+        }
+    }
     Ok(max_pressure)
+}
+
+fn make_clique(valves: &HashMap<String, Valve>) -> HashMap<String, Valve> {
+    let mut clique = HashMap::new();
+    for (name, valve) in valves {
+        if valve.rate == 0 && name.as_str() != "AA" {
+            continue;
+        }
+        let mut tunnels = Vec::new();
+        let mut queue = Vec::from([name.clone()]);
+        let mut visited = HashSet::from([name.clone()]);
+        let mut dist = 0;
+        while !queue.is_empty() {
+            queue = queue
+                .iter()
+                .map(|curr| {
+                    let valve = valves.get(curr).unwrap();
+                    if valve.rate != 0 && curr != name {
+                        tunnels.push((curr.to_string(), dist + 1));
+                    }
+                    valve
+                        .tunnels
+                        .iter()
+                        .filter_map(|tunnel| {
+                            if visited.insert(tunnel.0.clone()) {
+                                Some(tunnel.0.clone())
+                            } else {
+                                None
+                            }
+                        })
+                        .collect::<Vec<String>>()
+                })
+                .flatten()
+                .collect();
+            dist += 1;
+        }
+        clique.insert(name.clone(), Valve::new(name.clone(), valve.rate, tunnels));
+    }
+    clique
 }
 
 struct Valve {
     name: String,
     rate: usize,
-    tunnels: Vec<String>,
+    tunnels: Vec<(String, usize)>,
 }
 
 impl Valve {
-    fn new(input: String) -> Self {
+    fn new(name: String, rate: usize, tunnels: Vec<(String, usize)>) -> Self {
+        Valve {
+            name,
+            rate,
+            tunnels,
+        }
+    }
+
+    fn from(input: String) -> Self {
         let re = Regex::new(r"\d+|[A-Z]{2}").unwrap();
         let mut info = re.find_iter(&input);
         let name = info.next().unwrap().as_str().to_string();
         let rate = info.next().unwrap().as_str().parse().unwrap();
         let mut tunnels = Vec::new();
         while let Some(tunnel) = info.next() {
-            tunnels.push(tunnel.as_str().to_string());
+            tunnels.push((tunnel.as_str().to_string(), 1));
         }
         Valve {
             name,
@@ -105,139 +152,40 @@ impl Valve {
 struct State {
     total_pressure: usize,
     curr: String,
-    e: String,
     time: usize,
     on: HashSet<String>,
 }
 
 impl State {
-    fn new(
-        total_pressure: usize,
-        curr: String,
-        e: String,
-        time: usize,
-        on: HashSet<String>,
-    ) -> Self {
+    fn new(total_pressure: usize, curr: String, time: usize, on: HashSet<String>) -> Self {
         State {
             total_pressure,
             curr,
-            e,
             time,
             on,
         }
     }
 
-    fn find_paths(&self, valves: &HashMap<String, Valve>) -> Vec<Self> {
-        let mut pressure_time = self.time - 1;
-        let mut queue = Vec::from([&self.curr]);
-        let mut visited = HashSet::from([&self.curr]);
-        let mut paths = Vec::new();
-        while pressure_time > 0 && !queue.is_empty() {
-            queue = queue
-                .iter()
-                .map(|curr| {
-                    let curr_str = curr.clone();
-                    let curr_valve = valves.get(curr_str).unwrap();
-                    if curr_valve.rate != 0 && !self.on.contains(curr_str) {
-                        let mut new_state = State::new(
-                            self.total_pressure + curr_valve.rate * pressure_time,
-                            curr_str.clone(),
-                            "".to_string(),
-                            pressure_time,
-                            self.on.clone(),
-                        );
-                        new_state.on.insert(curr_str.to_string());
-                        paths.push(new_state)
-                    }
-                    curr_valve
-                        .tunnels
-                        .iter()
-                        .filter_map(|tunnel| {
-                            if visited.insert(tunnel) {
-                                Some(tunnel)
-                            } else {
-                                None
-                            }
-                        })
-                        .collect::<Vec<&String>>()
-                })
-                .flatten()
-                .collect();
-            pressure_time -= 1;
-        }
-        paths
-    }
-
-    fn find_paths_with_elephant(&self, valves: &HashMap<String, Valve>) -> Vec<Self> {
-        let mut pressure_time = self.time - 1;
-        let mut queue = Vec::from([(&self.curr, &self.e)]);
-        let mut visited = HashSet::from([(&self.curr, &self.e)]);
-        let mut paths = Vec::new();
-        while pressure_time > 0 && !queue.is_empty() {
-            queue = queue
-                .iter()
-                .map(|curr| {
-                    let (curr_str, e_str) = (curr.0, curr.1);
-                    let (curr_valve, e_valve) =
-                        (valves.get(curr_str).unwrap(), valves.get(e_str).unwrap());
-                    let mut next = curr_valve
-                        .tunnels
-                        .iter()
-                        .map(|tunnel_c| {
-                            let mut temp = e_valve
-                                .tunnels
-                                .iter()
-                                .filter_map(|tunnel_e| {
-                                    if visited.insert((tunnel_c, tunnel_e)) {
-                                        Some((tunnel_c, tunnel_e))
-                                    } else {
-                                        None
-                                    }
-                                })
-                                .collect::<Vec<(&String, &String)>>();
-                            if visited.insert((tunnel_c, &e_valve.name)) {
-                                temp.push((tunnel_c, &e_valve.name));
-                            }
-                            temp
-                        })
-                        .flatten()
-                        .collect::<Vec<(&String, &String)>>();
-                    next.append(
-                        &mut e_valve
-                            .tunnels
-                            .iter()
-                            .filter_map(|tunnel_e| {
-                                if visited.insert((&curr_valve.name, tunnel_e)) {
-                                    Some((&curr_valve.name, tunnel_e))
-                                } else {
-                                    None
-                                }
-                            })
-                            .collect::<Vec<(&String, &String)>>(),
-                    );
-                    if (curr_valve.rate != 0 || e_valve.rate != 0)
-                        && !self.on.contains(curr_str)
-                        && !self.on.contains(e_str)
-                    {
-                        let mut new_state = State::new(
-                            self.total_pressure
-                                + curr_valve.rate * pressure_time
-                                + e_valve.rate * pressure_time,
-                            curr_str.clone(),
-                            e_str.clone(),
-                            pressure_time,
-                            self.on.clone(),
-                        );
-                        new_state.on.insert(curr_str.to_string());
-                        new_state.on.insert(e_str.to_string());
-                        paths.push(new_state)
-                    }
-                    next
-                })
-                .flatten()
-                .collect();
-            pressure_time -= 1;
-        }
-        paths
+    fn get_next_states(&self, valves: &HashMap<String, Valve>) -> Vec<Self> {
+        let curr = valves.get(&self.curr).unwrap();
+        curr.tunnels
+            .iter()
+            .filter_map(|tunnel| {
+                let (next, dist) = tunnel;
+                if self.time <= *dist || self.on.contains(next) {
+                    return None;
+                }
+                let remaining_time = self.time - dist;
+                let next_valve = valves.get(next).unwrap();
+                let mut on = self.on.clone();
+                on.insert(next.to_string());
+                Some(State::new(
+                    self.total_pressure + remaining_time * next_valve.rate,
+                    next.clone(),
+                    remaining_time,
+                    on,
+                ))
+            })
+            .collect()
     }
 }

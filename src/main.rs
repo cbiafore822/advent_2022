@@ -29,7 +29,7 @@ static PEAK_ALLOC: PeakAlloc = PeakAlloc;
 
 fn main() {
     let start = Local::now();
-    let res = day_16::find_maximal_pressure_with_elephant().unwrap();
+    let res = day_16::find_max_pressure_with_elephant().unwrap();
     let duration = (Local::now() - start).num_microseconds().unwrap();
     println!("Result: {}", res);
     println!("Elapsed time: {} us", duration);
