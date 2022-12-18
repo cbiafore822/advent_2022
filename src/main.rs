@@ -16,6 +16,7 @@ mod day_14;
 mod day_15;
 mod day_16;
 mod day_17;
+mod day_18;
 mod day_2;
 mod day_3;
 mod day_4;
@@ -30,7 +31,7 @@ static PEAK_ALLOC: PeakAlloc = PeakAlloc;
 
 fn main() {
     let start = Local::now();
-    let res = day_17::get_tall_height().unwrap();
+    let res = day_18::get_surface_area().unwrap();
     let duration = (Local::now() - start).num_microseconds().unwrap();
     println!("Result: {}", res);
     println!("Elapsed time: {} us", duration);
