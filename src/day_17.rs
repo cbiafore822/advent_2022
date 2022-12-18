@@ -12,52 +12,22 @@ const TEST: &str = "inputs/test.txt";
 // Memory Used: 816.16504 kb
 pub fn get_height() -> Result<usize> {
     let input = get_input(INPUT)?;
-    let mut jets = input.lines().next().unwrap().chars().enumerate().cycle();
-    let mut shapes = ['-', '+', 'J', 'I', 'o'].iter().enumerate().cycle();
-    let mut cache: HashMap<(usize, usize, [usize; 7]), (usize, usize)> = HashMap::new();
-    let mut resting = HashSet::new();
-    let mut height = 0;
-    let mut rocks = 2022;
-    while rocks > 0 {
-        let c = shapes.next().unwrap().clone();
-        let mut shape = Shape::new(*c.1, height);
-        loop {
-            let jet = jets.next().unwrap();
-            shape.move_shape(jet.1, &mut resting);
-            if shape.move_shape('v', &mut resting) {
-                for pos in &shape.positions {
-                    height = max(height, pos.1);
-                }
-                rocks -= 1;
-                if let Some((s_height, s_rocks)) = cache.insert(
-                    (c.0, jet.0, column_heights(&resting, &height)),
-                    (height, rocks),
-                ) {
-                    let cycle_len = s_rocks - rocks;
-                    if rocks % cycle_len != 0 {
-                        break;
-                    }
-                    let dh = height - s_height;
-                    height += dh * (rocks / cycle_len);
-                    rocks %= cycle_len;
-                }
-                break;
-            };
-        }
-    }
-    Ok(height)
+    Ok(find_height(input, 2022))
 }
 
 // Elapsed time: 145147 us
 // Memory Used: 816.16504 kb
 pub fn get_tall_height() -> Result<usize> {
     let input = get_input(INPUT)?;
+    Ok(find_height(input, 1000000000000))
+}
+
+fn find_height(input: String, mut rocks: usize) -> usize {
     let mut jets = input.lines().next().unwrap().chars().enumerate().cycle();
     let mut shapes = ['-', '+', 'J', 'I', 'o'].iter().enumerate().cycle();
     let mut cache: HashMap<(usize, usize, [usize; 7]), (usize, usize)> = HashMap::new();
     let mut resting = HashSet::new();
     let mut height = 0;
-    let mut rocks = 1000000000000;
     while rocks > 0 {
         let c = shapes.next().unwrap().clone();
         let mut shape = Shape::new(*c.1, height);
@@ -85,7 +55,7 @@ pub fn get_tall_height() -> Result<usize> {
             };
         }
     }
-    Ok(height)
+    height
 }
 
 fn column_heights(resting: &HashSet<(usize, usize)>, height: &usize) -> [usize; 7] {
