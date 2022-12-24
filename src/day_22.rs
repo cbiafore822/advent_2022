@@ -5,6 +5,8 @@ use std::io::Result;
 const INPUT: &str = "inputs/day_22.txt";
 const TEST: &str = "inputs/test.txt";
 
+// Elapsed time: 60821 us
+// Memory Used: 225.95215 kb
 pub fn get_password() -> Result<usize> {
     let input = get_input(INPUT)?;
     let (grid, instruction_str) = build_grid(input);
@@ -23,6 +25,8 @@ pub fn get_password() -> Result<usize> {
     Ok((curr.0 + 1) * 1000 + (curr.1 + 1) * 4 + direction)
 }
 
+// Elapsed time: 8460 us
+// Memory Used: 225.95215 kb
 pub fn get_cube_password() -> Result<usize> {
     let input = get_input(INPUT)?;
     let (grid, instruction_str) = build_grid(input);
