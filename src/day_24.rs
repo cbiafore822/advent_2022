@@ -117,7 +117,12 @@ impl Valley {
             .collect()
     }
 
-    fn find_shortest_path(&self, start: (isize, isize), end: (isize, isize), start_time: usize) -> usize {
+    fn find_shortest_path(
+        &self,
+        start: (isize, isize),
+        end: (isize, isize),
+        start_time: usize,
+    ) -> usize {
         let mut queue = Vec::from([(start, start_time)]);
         let mut visited = HashSet::from([(start, start_time)]);
         let mut time = usize::MAX;
@@ -128,10 +133,7 @@ impl Valley {
                     let mut next_states = Vec::new();
                     if *curr == end {
                         time = min(time, *t);
-                    } else if ((end.0 - curr.0).abs() + (end.1 - curr.1).abs())
-                        as usize
-                        + *t
-                        < time
+                    } else if ((end.0 - curr.0).abs() + (end.1 - curr.1).abs()) as usize + *t < time
                     {
                         let blizzards = self.get_blizzards_at_time(t + 1);
                         next_states = NEIGHBORS
