@@ -1,7 +1,8 @@
 use crate::get_input;
 use std::{
+    cmp::{max, min},
     collections::{HashMap, HashSet},
-    io::Result, cmp::{min, max},
+    io::Result,
 };
 
 const INPUT: &str = "inputs/day_23.txt";
