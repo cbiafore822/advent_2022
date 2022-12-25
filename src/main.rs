@@ -22,6 +22,7 @@ mod day_2;
 mod day_20;
 mod day_21;
 mod day_22;
+mod day_23;
 mod day_3;
 mod day_4;
 mod day_5;
@@ -35,7 +36,7 @@ static PEAK_ALLOC: PeakAlloc = PeakAlloc;
 
 fn main() {
     let start = Local::now();
-    let res = day_22::get_cube_password().unwrap();
+    let res = day_23::get_rectangle_area().unwrap();
     let duration = (Local::now() - start).num_microseconds().unwrap();
     println!("Result: {}", res);
     println!("Elapsed time: {} us", duration);
